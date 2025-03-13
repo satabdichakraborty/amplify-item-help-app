@@ -1,39 +1,69 @@
-import { useEffect, useState } from "react";
-import type { Schema } from "../amplify/data/resource";
-import { generateClient } from "aws-amplify/data";
-
-const client = generateClient<Schema>();
+import { useState } from "react";
+import { ExamItem } from "./types";
+import ExamItemsList from "./components/ExamItemsList";
+import ItemEditor from "./components/ItemEditor";
+import { examItemService } from "./services/examItemService";
+import "./App.css";
 
 function App() {
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
+  const [currentView, setCurrentView] = useState<"list" | "editor">("list");
+  const [currentItem, setCurrentItem] = useState<ExamItem | undefined>(undefined);
 
-  useEffect(() => {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    });
-  }, []);
+  const handleEditItem = (item: ExamItem) => {
+    setCurrentItem(item);
+    setCurrentView("editor");
+  };
 
-  function createTodo() {
-    client.models.Todo.create({ content: window.prompt("Todo content") });
-  }
+  const handleCreateItem = () => {
+    setCurrentItem(undefined);
+    setCurrentView("editor");
+  };
+
+  const handleSaveItem = async (item: ExamItem) => {
+    try {
+      if (item.id && currentItem) {
+        // Update existing item
+        await examItemService.updateExamItem(item.id, item);
+      } else {
+        // Create new item
+        await examItemService.createExamItem(item);
+      }
+      setCurrentView("list");
+    } catch (error) {
+      console.error("Error saving item:", error);
+      alert("Failed to save item. Please try again.");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setCurrentView("list");
+  };
 
   return (
-    <main>
-      <h1>My todos</h1>
-      <button onClick={createTodo}>+ new</button>
-      <ul>
-        {todos.map((todo) => (
-          <li key={todo.id}>{todo.content}</li>
-        ))}
-      </ul>
-      <div>
-        🥳 App successfully hosted. Try creating a new todo.
-        <br />
-        <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
-          Review next step of this tutorial.
-        </a>
-      </div>
-    </main>
+    <div className="app-container">
+      <header className="app-header">
+        <h1>Cert Item Helper</h1>
+      </header>
+
+      <main className="app-content">
+        {currentView === "list" ? (
+          <ExamItemsList
+            onEditItem={handleEditItem}
+            onCreateItem={handleCreateItem}
+          />
+        ) : (
+          <ItemEditor
+            initialData={currentItem}
+            onCancel={handleCancelEdit}
+            onSave={handleSaveItem}
+          />
+        )}
+      </main>
+
+      <footer className="app-footer">
+        <p>&copy; {new Date().getFullYear()} Cert Item Helper</p>
+      </footer>
+    </div>
   );
 }
 

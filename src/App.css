@@ -40,3 +40,42 @@
 .read-the-docs {
   color: #888;
 }
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: 'Open Sans', Arial, sans-serif;
+}
+
+.app-header {
+  background-color: #232f3e;
+  color: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.app-content {
+  flex: 1;
+  padding: 2rem;
+  background-color: #f8f8f8;
+}
+
+.app-footer {
+  background-color: #232f3e;
+  color: white;
+  padding: 1rem 2rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* Import ItemEditor.css */
+@import url('./components/ItemEditor.css');
+
+/* Import ExamItemsList.css */
+@import url('./components/ExamItemsList.css');

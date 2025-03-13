@@ -7,9 +7,21 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
-  Todo: a
+  ExamItem: a
     .model({
-      content: a.string(),
+      questionId: a.string(),
+      stem: a.string(),
+      lastSaved: a.string(),
+      responses: a.hasMany('Response'),
+    })
+    .authorization((allow) => [allow.publicApiKey()]),
+  
+  Response: a
+    .model({
+      text: a.string(),
+      rationale: a.string(),
+      isCorrect: a.boolean(),
+      examItem: a.belongsTo('ExamItem'),
     })
     .authorization((allow) => [allow.publicApiKey()]),
 });
@@ -52,6 +64,6 @@ Fetch records from the database and use them in your frontend component.
 
 /* For example, in a React component, you can use this snippet in your
   function's RETURN statement */
-// const { data: todos } = await client.models.Todo.list()
+// const { data: examItems } = await client.models.ExamItem.list()
 
-// return <ul>{todos.map(todo => <li key={todo.id}>{todo.content}</li>)}</ul>
+// return <ul>{examItems.map(examItem => <li key={examItem.id}>{examItem.questionId}</li>)}</ul>

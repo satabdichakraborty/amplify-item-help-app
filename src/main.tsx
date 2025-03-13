@@ -3,10 +3,10 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { Amplify } from "aws-amplify";
+import { applyMode } from "@cloudscape-design/global-styles";
 
-// Import component CSS
-import "./components/ItemEditor.css";
-import "./components/ExamItemsList.css";
+// Apply Cloudscape mode (light or dark)
+applyMode("light");
 
 // Configure Amplify
 Amplify.configure({

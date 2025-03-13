@@ -1,6 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ExamItem, Response } from '../types';
-import './ItemEditor.css';
+import {
+  Container,
+  Header,
+  SpaceBetween,
+  Box,
+  Textarea,
+  Toggle,
+  Button,
+  FormField,
+  ColumnLayout,
+  StatusIndicator
+} from '@cloudscape-design/components';
 
 interface ItemEditorProps {
   initialData?: ExamItem;
@@ -88,93 +99,98 @@ const ItemEditor: React.FC<ItemEditorProps> = ({
   };
 
   return (
-    <div className="item-editor">
-      {/* Item Content Section */}
-      <div className="item-content">
-        <h2>Item Content</h2>
-        <div className="info-label">
-          <span>Stem</span>
-          <span className="info-icon">Info</span>
-        </div>
-        <p className="description">The question or scenario presented to the candidate.</p>
-        <textarea
-          value={item.stem}
-          onChange={(e) => handleStemChange(e.target.value)}
-          placeholder="Enter the item stem"
-          rows={4}
-          className="stem-input"
-        />
-      </div>
+    <Container>
+      <SpaceBetween size="l">
+        {/* Item Content Section */}
+        <Box padding="m" variant="awsui-key-label">
+          <Header variant="h2">Item Content</Header>
+          <SpaceBetween size="m">
+            <FormField
+              label="Stem"
+              description="The question or scenario presented to the candidate."
+              i18nStrings={{ info: 'Info' }}
+            >
+              <Textarea
+                value={item.stem}
+                onChange={({ detail }) => handleStemChange(detail.value)}
+                placeholder="Enter the item stem"
+                rows={4}
+              />
+            </FormField>
+          </SpaceBetween>
+        </Box>
 
-      {/* Responses Section */}
-      <div className="responses-section">
-        <div className="responses-header">
-          <h2>Responses</h2>
-          <span className="info-icon">Info</span>
-        </div>
-        <p className="description">Responses for this exam should contain an advanced solution or list of actions.</p>
+        {/* Responses Section */}
+        <Box padding="m" variant="awsui-key-label">
+          <Header variant="h2">Responses</Header>
+          <Box variant="p" padding={{ bottom: 'm' }}>
+            Responses for this exam should contain an advanced solution or list of actions.
+          </Box>
 
-        {item.responses.map((response, index) => (
-          <div key={response.id} className="response-item">
-            <h3>Response {index + 1}</h3>
-            
-            <div className="response-content">
-              <div className="response-left">
-                <div className="field-group">
-                  <label>Text</label>
-                  <textarea
-                    value={response.text}
-                    onChange={(e) => handleResponseTextChange(index, e.target.value)}
-                    placeholder={`Enter response ${index + 1}`}
-                    className="response-input"
-                  />
-                </div>
+          {item.responses.map((response, index) => (
+            <Box
+              key={response.id}
+              padding="l"
+              variant="container"
+              marginBottom="m"
+            >
+              <SpaceBetween size="m">
+                <Header variant="h3">Response {index + 1}</Header>
                 
-                <div className="field-group">
-                  <label>Correct</label>
-                  <div className="toggle-switch">
-                    <input
-                      type="checkbox"
-                      checked={response.isCorrect}
-                      onChange={(e) => handleCorrectToggle(index, e.target.checked)}
-                      id={`toggle-${response.id}`}
+                <ColumnLayout columns={2} variant="text-grid">
+                  <SpaceBetween size="s">
+                    <FormField label="Text">
+                      <Textarea
+                        value={response.text}
+                        onChange={({ detail }) => handleResponseTextChange(index, detail.value)}
+                        placeholder={`Enter response ${index + 1}`}
+                      />
+                    </FormField>
+                    
+                    <FormField label="Correct">
+                      <Toggle
+                        checked={response.isCorrect}
+                        onChange={({ detail }) => handleCorrectToggle(index, detail.checked)}
+                      />
+                    </FormField>
+                  </SpaceBetween>
+                  
+                  <FormField label="Rationale">
+                    <Textarea
+                      value={response.rationale}
+                      onChange={({ detail }) => handleRationaleChange(index, detail.value)}
+                      placeholder="Rationale"
                     />
-                    <label htmlFor={`toggle-${response.id}`} className="toggle-label"></label>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="response-right">
-                <div className="field-group">
-                  <label>Rationale</label>
-                  <textarea
-                    value={response.rationale}
-                    onChange={(e) => handleRationaleChange(index, e.target.value)}
-                    placeholder="Rationale"
-                    className="rationale-input"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+                  </FormField>
+                </ColumnLayout>
+              </SpaceBetween>
+            </Box>
+          ))}
+        </Box>
 
-      {/* Footer */}
-      <div className="editor-footer">
-        <div className="last-saved">
-          Last saved: {item.lastSaved || 'Not saved yet'}
-        </div>
-        <div className="action-buttons">
-          <button className="cancel-button" onClick={onCancel}>
-            Cancel
-          </button>
-          <button className="save-button" onClick={handleSave}>
-            Run item rules
-          </button>
-        </div>
-      </div>
-    </div>
+        {/* Footer */}
+        <Box
+          padding="m"
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Box variant="small">
+            <StatusIndicator type="info">
+              Last saved: {item.lastSaved || 'Not saved yet'}
+            </StatusIndicator>
+          </Box>
+          <SpaceBetween direction="horizontal" size="xs">
+            <Button variant="link" onClick={onCancel}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={handleSave}>
+              Run item rules
+            </Button>
+          </SpaceBetween>
+        </Box>
+      </SpaceBetween>
+    </Container>
   );
 };
 

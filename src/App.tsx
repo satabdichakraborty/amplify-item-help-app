@@ -3,6 +3,7 @@ import { ExamItem } from "./types";
 import ExamItemsList from "./components/ExamItemsList";
 import ItemEditor from "./components/ItemEditor";
 import { examItemService } from "./services/examItemService";
+import { AppLayout, Container, Header, ContentLayout } from "@cloudscape-design/components";
 import "./App.css";
 
 function App() {
@@ -40,30 +41,34 @@ function App() {
   };
 
   return (
-    <div className="app-container">
-      <header className="app-header">
-        <h1>Cert Item Helper</h1>
-      </header>
-
-      <main className="app-content">
-        {currentView === "list" ? (
-          <ExamItemsList
-            onEditItem={handleEditItem}
-            onCreateItem={handleCreateItem}
-          />
-        ) : (
-          <ItemEditor
-            initialData={currentItem}
-            onCancel={handleCancelEdit}
-            onSave={handleSaveItem}
-          />
-        )}
-      </main>
-
-      <footer className="app-footer">
-        <p>&copy; {new Date().getFullYear()} Cert Item Helper</p>
-      </footer>
-    </div>
+    <AppLayout
+      content={
+        <ContentLayout
+          header={
+            <Header variant="h1">
+              Cert Item Helper
+            </Header>
+          }
+        >
+          <Container>
+            {currentView === "list" ? (
+              <ExamItemsList
+                onEditItem={handleEditItem}
+                onCreateItem={handleCreateItem}
+              />
+            ) : (
+              <ItemEditor
+                initialData={currentItem}
+                onCancel={handleCancelEdit}
+                onSave={handleSaveItem}
+              />
+            )}
+          </Container>
+        </ContentLayout>
+      }
+      navigationHide
+      toolsHide
+    />
   );
 }
 
